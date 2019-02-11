@@ -1,6 +1,6 @@
 # 作ろうとしてるもの
 
- ![ネットワーク構成図](./abstruct.jpg)
+ ![ネットワーク構成図](./abstruct.png)
 
 # 環境
 
@@ -26,7 +26,7 @@
   * Server #3
     * Dell Vostro 270s
       * 外部向けの公開用Webサーバー
-        * 用途が決まっちゃいないのにこの中では一番スペックが高い
+        * 用途が決まっちゃいないのにこの中では一番スペックが高い謎
 * 外付けHDD
   * 2台でRAID1組んでServer#1,2,3のバックアップ用に
 
@@ -118,9 +118,32 @@ Minibianを直接入れられたらよかったんだけど、
 
 ```shell
 $ sudo apt-get purge wolfram-engine
+$ sudo apt-get autoremove wolfram-engine
 $ sudo apt-get purge sonic-pi
 $ sudo apt-get purge scratch
+$ sudo apt-get autoremove scratch
 $ sudo apt-get remove --purge libreoffice*
+$ sudo apt-get clean
+$ sudo apt-get autoremove
+```
+
+scratchとwolfram-engineについては ```apt-get purge``` しても削除対象のファイルが残っているので、  
+追加で ```apt-get autoremove``` している。
+
+* Minecraft、Python Games、IDLE、ブラウザの削除
+
+```shell
+$ sudo apt-get autoremove -y python-pygame
+$ rm -rf /home/pi/python_games/
+$ sudo rmdir /usr/local/games/
+$ sudo rmdir /usr/games/
+$ sudo apt-get autoremove -y pistore
+$ sudo apt-get autoremove -y python-minecraftpi
+$ sudo apt-get autoremove -y idle idle3
+$ sudo apt-get autoremove -y netsurf-common dillo
+$ sudo apt-get autoremove -y debian-reference-common
+$ sudo apt-get autoremove -y libraspberrypi-doc
+$ sudo apt-get autoremove -y galculator
 $ sudo apt-get clean
 $ sudo apt-get autoremove
 ```
@@ -130,8 +153,10 @@ $ sudo apt-get autoremove
 Raspberry Pi 不要パッケージの削除
 https://qiita.com/NaotakaSaito/items/f6e1ae206963b971028e
 
+不要になったパッケージを削除してくれる、autoremove
+http://wadap.hatenablog.com/entry/20080109/1199891111
 
-#### RaspberryPi3 Model B
+### RaspberryPi3 Model B
 
 * OS:CentOS 7.6 armhfp(Arm32) Minimal image for RaspberryPi 2/3
 * ストレージ: microSD 32GB (class10)
@@ -141,7 +166,7 @@ http://isoredirect.centos.org/altarch/7/isos/armhfp/CentOS-Userland-7-armv7hl-Ra
 https://wiki.centos.org/SpecialInterestGroup/AltArch/armhfp
 
 こちらも落としてきた.raw.xzファイルを  
-WSLで ``` $ xz -d ファイル名 ``` して解凍された.rawファイルをフォーマットしたmicroSDにWin32DiskImagerで書き込めばOK。 
+WSLで ``` $ xz -d CentOS-Userland-7-armv7hl-RaspberryPI-Minimal-1810-sda.raw.xz ``` して解凍された.rawファイルをフォーマットしたmicroSDにWin32DiskImagerで書き込めばOK。 
 
 ログインユーザ名とパスワードは、  
 ``` root ``` と ``` centos ``` 。
@@ -197,6 +222,40 @@ Dec 17 2018 23:56:39
 Copyright (c) 2012 Broadcom
 version da468960fe03ecbaa8e3f1ee01c7217c3bd01fa8 (clean) (release)
 ```
+
+### 両マシン共通
+
+電源オンオフが判断しにくいので、  
+```/boot/config.txt``` を編集して対処する。  
+CentOSには元からファイルが存在しないので新しく作成する。  
+ファイルの編集が終わったら ```$ sudo reboot``` しておく。
+
+```shell:/boot/config.txt
+# 電源オン=点滅、電源オフ=点灯
+dtparam=pwr_led_trigger=heartbeat
+```
+
+Raspberry Piの電源ランプを点滅させて電源オンオフをわかりやすくする
+https://qiita.com/mnao305/items/a764d34de01b972df942
+
+### DELL Vostro270s
+
+USBにインストールメディアを入れておく。　　
+今回は16GBのUSBメモリにrufus-3.3.exeで入れた。 
+
+https://coreos.com/os/docs/latest/booting-with-iso.html
+
+USBからブートすると自動で ```core``` ユーザでログインするので、  
+パスワードを変更し、DHCPで割り振られたIPアドレスを確認する。  
+
+```shell
+$ sudo passwd core
+```
+
+以下、SSHでの操作。  
+
+
+
 
 ##### 参考資料
 
