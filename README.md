@@ -1,6 +1,6 @@
 # 家庭内ネットワーク環境構築記録
 
- ![ネットワーク構成図](./abstruct.png)
+ ![ネットワーク構成図](./MyHomeNetwork_plan.svg)
 
 # 環境
 
